@@ -540,7 +540,6 @@ function SR100C_v1(obj) {
 			duration: 1,
 			z: -4,
 		});
-
 		document.getElementById("explode-button").disabled = true;
 		setTimeout(function () {
 			document.getElementById("explode-button").disabled = false;
