@@ -176,7 +176,7 @@
                 <img src="./assets/Animation-On-Button.png" id="animation-on" style="display: none;">
             </div>
         </div>
-
+ 
         <div class="container-bottom-right">
             <div class="menu-container-blue-album">
                 <img src="./assets/Album-Button.png">
