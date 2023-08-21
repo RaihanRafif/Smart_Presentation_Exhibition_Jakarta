@@ -19,7 +19,7 @@
     <script type="importmap">
         {
                 "imports": {
-                "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+                "three": "https://unpkg.com/three@0.127.0/build/three.module.js",
                 "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
                 }
             }
@@ -176,7 +176,7 @@
                 <img src="./assets/Animation-On-Button.png" id="animation-on" style="display: none;">
             </div>
         </div>
- 
+
         <div class="container-bottom-right">
             <div class="menu-container-blue-album">
                 <img src="./assets/Album-Button.png">
@@ -189,7 +189,7 @@
 
 
         <div class="container-full-screen-pdf">
-            <div class="pdf-pop-up-container" id="pdf-pop-up-container" >
+            <div class="pdf-pop-up-container" id="pdf-pop-up-container">
                 <embed src="./files/SR_en_ver.2.06_20220523.pdf#scrollbar=0&toolbar=0&view=FitH" type="application/pdf" width="100%" height="100%" />
             </div>
         </div>
@@ -202,9 +202,11 @@
             <label for="loadingBar" id='loadingBarLabel'> Loading... </label>
             <progress id='loadingBar' max='100' value='0'></progress>
         </div>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
+        <script src="./js/new-script.js"></script>
         <script type="module" src="script.js"> </script>
         <script type="module" src="./js/home.js"></script>
+        
     </div>
 </body>
 

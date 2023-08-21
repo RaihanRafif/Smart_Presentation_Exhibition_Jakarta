@@ -1,6 +1,17 @@
+import {
+	Color,
+	Vector3,
+	GridHelper,
+	BoxGeometry, MeshBasicMaterial, Mesh
+} from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { scene, camera, orbitControls, loader } from "../script.js";
-import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+// import * as THREE from "three";
+// import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+import { GLTFLoader } from 'https://unpkg.com/three@0.127.0/examples/jsm/loaders/GLTFLoader.js';
+
 import {
 	CSS2DRenderer,
 	CSS2DObject,
@@ -210,11 +221,11 @@ if (getMode && getMode === "dark-theme") {
 	document.body.classList.add("dark-theme");
 	toggle.classList.add("active");
 
-	scene.background = new THREE.Color(0x1d2538);
+	scene.background = new Color(0x1d2538);
 
 	scene.remove(scene.getObjectByName("grid"));
 
-	const grid = new THREE.GridHelper(20, 20, 0x475b74, 0x475b74);
+	const grid = new GridHelper(20, 20, 0x475b74, 0x475b74);
 	grid.position.y = -1;
 	grid.name = "grid";
 	scene.add(grid);
@@ -228,21 +239,21 @@ toggle.addEventListener("click", () => {
 	document.body.classList.toggle("dark-theme");
 
 	if (document.body.classList.contains("dark-theme")) {
-		scene.background = new THREE.Color(0x1d2538);
+		scene.background = new Color(0x1d2538);
 
 		scene.remove(scene.getObjectByName("grid"));
 
-		const grid = new THREE.GridHelper(20, 20, 0x475b74, 0x475b74);
+		const grid = new GridHelper(20, 20, 0x475b74, 0x475b74);
 		grid.position.y = -1;
 		grid.name = "grid";
 		scene.add(grid);
 
 		localStorage.setItem("mode", "dark-theme");
 	} else {
-		scene.background = new THREE.Color(0xdbe9e9);
+		scene.background = new Color(0xdbe9e9);
 
 		scene.remove(scene.getObjectByName("grid"));
-		const grid = new THREE.GridHelper(20, 20, 0xffffff, 0xffffff);
+		const grid = new GridHelper(20, 20, 0xffffff, 0xffffff);
 		grid.position.y = -1;
 		grid.name = "grid";
 		scene.add(grid);
@@ -412,20 +423,33 @@ video_pop_up.addEventListener("click", function (e) {
 // ----------------------------------- Explode 3D File -----------------------------------
 
 // Function to create an annotation
-function createAnnotation(obj, content, position, label) {
-	const annotationDiv = document.createElement("div");
-	annotationDiv.id = "annotationDiv"
+// function createAnnotation(obj, content, position, label) {
+// 	const annotationDiv = document.createElement("div");
+// 	annotationDiv.id = "annotationDiv"
 
-	annotationDiv.textContent = content;
-	annotationDiv.style.backgroundColor = "#74E7D4";
-	annotationDiv.style.fontFamily = "Ubuntu";
+// 	annotationDiv.textContent = content;
+// 	annotationDiv.style.backgroundColor = "#74E7D4";
+// 	annotationDiv.style.fontFamily = "Ubuntu";
 
-	const annotation = new CSS2DObject(annotationDiv);
-	annotation.name = label;
-	annotation.position.copy(position);
-	annotation.center.set(0, 1, 0);
-	obj.add(annotation);
+// 	const annotation = new CSS2DObject(annotationDiv);
+// 	annotation.name = label;
+// 	annotation.position.copy(position);
+// 	annotation.center.set(0, 1, 0);
+// 	obj.add(annotation);
+// }
+
+function createAnnotation(scene, content, position, label) {
+	const annotationGeometry = new BoxGeometry(0, 0.1, 0.5);
+	const annotationMaterial = new MeshBasicMaterial({ color: 0xff0000 });
+	const annotationMesh = new Mesh(annotationGeometry, annotationMaterial);
+
+	annotationMesh.position.copy(position);
+
+	scene.add(annotationMesh);
 }
+
+
+//tesss
 
 // Function to remove an annotation
 function removeAnnotation(obj, label) {
@@ -475,17 +499,17 @@ function SR100C_v1(obj) {
 		});
 
 		// SR100 Annotation
-		createAnnotation(obj, "Upper Casing", new THREE.Vector3(-0.6, 2.2, 0), "A");
-		createAnnotation(obj, "Material Feed", new THREE.Vector3(-0.3, 2.5, 0), "B");
-		createAnnotation(obj, "Hydraulic Casing Opener", new THREE.Vector3(0.6, 2.2, 0), "C");
-		createAnnotation(obj, "Guide Flange", new THREE.Vector3(-0.3, 1.5, 0), "D");
-		createAnnotation(obj, "Air Circulation", new THREE.Vector3(0.1, 1.75, 0.75), "E");
-		createAnnotation(obj, "Upper Frame", new THREE.Vector3(0.6, 1.5, 0.75), "F");
-		createAnnotation(obj, "Crushing Chamber", new THREE.Vector3(0.1, 1, 0.75), "G");
-		createAnnotation(obj, "Rotor", new THREE.Vector3(-0.1, 1, 0), "H");
-		createAnnotation(obj, "Vertical Shaft", new THREE.Vector3(-0.25, 0.5, 0), "I");
-		createAnnotation(obj, "Pulley", new THREE.Vector3(-0.1, -0.1, 0), "J");
-		createAnnotation(obj, "Shaped Material", new THREE.Vector3(-0.1, -0.1, 0.75), "K");
+		createAnnotation(obj, "Upper Casing", new Vector3(-0.6, 2.2, 0), "A");
+		createAnnotation(obj, "Material Feed", new Vector3(-0.3, 2.5, 0), "B");
+		createAnnotation(obj, "Hydraulic Casing Opener", new Vector3(0.6, 2.2, 0), "C");
+		createAnnotation(obj, "Guide Flange", new Vector3(-0.3, 1.5, 0), "D");
+		createAnnotation(obj, "Air Circulation", new Vector3(0.1, 1.75, 0.75), "E");
+		createAnnotation(obj, "Upper Frame", new Vector3(0.6, 1.5, 0.75), "F");
+		createAnnotation(obj, "Crushing Chamber", new Vector3(0.1, 1, 0.75), "G");
+		createAnnotation(obj, "Rotor", new Vector3(-0.1, 1, 0), "H");
+		createAnnotation(obj, "Vertical Shaft", new Vector3(-0.25, 0.5, 0), "I");
+		createAnnotation(obj, "Pulley", new Vector3(-0.1, -0.1, 0), "J");
+		createAnnotation(obj, "Shaped Material", new Vector3(-0.1, -0.1, 0.75), "K");
 
 		gsap.to(camera.position, {
 			duration: 2,
@@ -559,7 +583,7 @@ function SRユニット_v1(obj) {
 				child.visible = false;
 			}
 			else {
-				let target = new THREE.Vector3();
+				let target = new Vector3();
 				child.getWorldPosition(target);
 				target.normalize();
 				target.setX(target.x * 1 + child.position.x);
@@ -588,7 +612,7 @@ function SRユニット_v1(obj) {
 				child.visible = true;
 			}
 			else {
-				let target = new THREE.Vector3();
+				let target = new Vector3();
 				child.getWorldPosition(target);
 				target.normalize();
 				target.setX(child.position.x - target.x * 1);
@@ -784,11 +808,8 @@ const pdf_pop_up = document.querySelector(".container-full-screen-pdf");
 
 pdf_button.addEventListener("click", () => {
 	const annotationDivs = document.querySelectorAll("#annotationDiv");
-	console.log("1111");
 	if (annotationDivs) {
-		console.log("2222",annotationDivs);
 		annotationDivs.forEach(div => {
-			console.log("333333");
 			div.style.display = "none";
 		});
 	}

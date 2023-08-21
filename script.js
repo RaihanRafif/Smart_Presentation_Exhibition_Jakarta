@@ -1,20 +1,40 @@
 const myCanvas = document.querySelector("#myCanvas");
-// var myText = document.getElementById("myText").textContent;
 
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import {
+	Color,
+	LinearEncoding,
+	MeshBasicMaterial,
+	Mesh,
+	PerspectiveCamera,
+	sRGBEncoding,
+	Sprite,
+	HemisphereLight,
+	SpriteMaterial,
+	TextureLoader,
+	BoxBufferGeometry,
+	Scene,
+	Vector3,
+	WebGLRenderer,
+	GridHelper,
+	DirectionalLight,
+	PointLight,
+	LoadingManager
+} from "https://unpkg.com/three@0.127.0/build/three.module.js";
+import { OrbitControls } from "https://unpkg.com/three@0.127.0/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from 'https://unpkg.com/three@0.127.0/examples/jsm/loaders/GLTFLoader.js';
+
 import {
 	CSS2DRenderer,
 	CSS2DObject,
 } from "three/addons/renderers/CSS2DRenderer.js";
 
+
 // ----------------------------------- SCENE BACKGROUND COLOR -----------------------------------
-export const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xdbe9e9);
+export const scene = new Scene();
+scene.background = new Color(0xdbe9e9);
 
 // ------------------------------------------- CAMERA -------------------------------------------
-export const camera = new THREE.PerspectiveCamera(
+export const camera = new PerspectiveCamera(
 	60,
 	myCanvas.offsetWidth / myCanvas.offsetHeight
 );
@@ -27,7 +47,7 @@ const divisions = 20;
 const colorCenterLine = 0xffffff;
 const colorGrid = 0xffffff;
 
-const grid = new THREE.GridHelper(size, divisions, colorCenterLine, colorGrid);
+const grid = new GridHelper(size, divisions, colorCenterLine, colorGrid);
 grid.position.y = -1;
 grid.name = "grid";
 scene.add(grid);
@@ -42,7 +62,7 @@ scene.add(grid);
 */
 
 // ---------------------------------- LIGHTNING CUSTOM: AMBIENT ---------------------------------
-const ambientLight = new THREE.HemisphereLight(
+const ambientLight = new HemisphereLight(
 	"white", // bright sky color
 	"grey", // dim ground color
 	0 // intensity
@@ -51,7 +71,7 @@ ambientLight.name = "ambientLight";
 scene.add(ambientLight);
 
 // -------------------------------- LIGHTNING CUSTOM: DIRECTIONAL -------------------------------
-var dirLight = new THREE.DirectionalLight(0x404040, 0);
+var dirLight = new DirectionalLight(0x404040, 0);
 dirLight.name = "dirLight";
 dirLight.position.set(100, 100, -10);
 dirLight.castShadow = true;
@@ -59,34 +79,35 @@ scene.add(dirLight);
 
 // --------------------------- LIGHTNING DEFAULT: FRONT ABOVE CENTER ----------------------------
 const r = 20;
-const light1 = new THREE.PointLight(0xffffff, 1, 0);
+const light1 = new PointLight(0xffffff, 1, 0);
 light1.name = "light1";
 light1.position.set(r, r, 0);
 light1.shadowMapVisible = true;
 scene.add(light1);
 
 // ----------------------------- LIGHTNING DEFAULT: BACK ABOVE LEFT -----------------------------
-const light2 = new THREE.PointLight(0xffffff, 1, 0);
+const light2 = new PointLight(0xffffff, 1, 0);
 light2.name = "light2";
 light2.position.set(-0.5 * r, r, 0.866 * r);
 scene.add(light2);
 
 // ---------------------------- LIGHTNING DEFAULT: BACK ABOVE RIGHT -----------------------------
-const light3 = new THREE.PointLight(0xffffff, 1, 0);
+const light3 = new PointLight(0xffffff, 1, 0);
 light3.name = "light3";
 light3.position.set(-0.5 * r, r, -0.866 * r);
 scene.add(light3);
 
 // --------------------------- LIGHTNING DEFAULT: CENTER BELOW CENTER ---------------------------
-const light4 = new THREE.PointLight(0xffffff, 1, 0);
+const light4 = new PointLight(0xffffff, 1, 0);
 light4.name = "light4";
 light4.position.set(0, -r, 0);
 scene.add(light4);
 
 // --------------------------- LIGHTNING DEFAULT: CENTER BELOW CENTER ---------------------------
-const renderer = new THREE.WebGLRenderer({ canvas: myCanvas });
+const renderer = new WebGLRenderer({ canvas: myCanvas });
 renderer.setClearColor(0xff0000, 1.0);
 renderer.setPixelRatio(window.devicePixelRatio);
+renderer.outputEncoding = sRGBEncoding;
 renderer.setSize(myCanvas.offsetWidth, myCanvas.offsetHeight);
 
 // --------------------------------------- ORBIT CONTROLS ---------------------------------------
@@ -106,7 +127,7 @@ const loadingScreenBar = document.getElementById("loadingBar");
 const loadingScreenContainer = document.querySelector(
 	".loadingScreenContainer"
 );
-const loadingManager = new THREE.LoadingManager();
+const loadingManager = new LoadingManager();
 
 loadingManager.onStart = function () {
 	loadingScreenContainer.style.display = "flex";
@@ -128,19 +149,51 @@ let path = "files/" + "SR100C_v1.glb";
 
 loader.load(
 	path,
-	function (gltf) {
+	(gltf) => {
 		let file3D = gltf.scene;
 		file3D.name = "file3D";
+
+		const model = gltf.scene.children[0]
 		scene.add(file3D);
 		file3D.layers.enableAll();
 
 		file3D.position.set(0, -0.95, 0);
+
+		createMarker(file3D, new Vector3(-0.3, 2.5, 0))
 	},
 	undefined,
 	function (error) {
 		console.error(error);
 	}
 );
+
+// Vector3(-0.3, 2.5, 0)
+
+
+function createMarker(model, position) {
+	console.log("HHHH", model);
+	const loader = new TextureLoader();
+	loader.crossOrigin = "";
+	const map = loader.load("https://i.imgur.com/EZynrrA.png");
+	map.encoding = sRGBEncoding
+
+	const spriteMaterialFront = new SpriteMaterial({ map });
+
+	const spriteFront = new Sprite(spriteMaterialFront);
+	spriteFront.position.copy(position)
+
+	const spriteMaterialRear = new SpriteMaterial({
+		map,
+		opacity: 0.3,
+		transparent: true,
+		depthTest: false
+	});
+
+	const spriteRear = new Sprite(spriteMaterialRear);
+	spriteRear.position.copy(position)
+
+	model.add(spriteFront, spriteRear)
+}
 
 // ----------------------------------------- RENDER LOOP ----------------------------------------
 renderer.setAnimationLoop(() => {
