@@ -159,7 +159,7 @@ loader.load(
 
 		file3D.position.set(0, -0.95, 0);
 
-		createMarker(file3D, new Vector3(-0.3, 2.5, 0))
+		// createMarker(file3D, new Vector3(-0.3, 2.5, 0))
 	},
 	undefined,
 	function (error) {
@@ -170,30 +170,30 @@ loader.load(
 // Vector3(-0.3, 2.5, 0)
 
 
-function createMarker(model, position) {
-	console.log("HHHH", model);
-	const loader = new TextureLoader();
-	loader.crossOrigin = "";
-	const map = loader.load("https://i.imgur.com/EZynrrA.png");
-	map.encoding = sRGBEncoding
+// function createMarker(model, position) {
+// 	console.log("HHHH", model);
+// 	const loader = new TextureLoader();
+// 	loader.crossOrigin = "";
+// 	const map = loader.load("https://i.imgur.com/EZynrrA.png");
+// 	map.encoding = sRGBEncoding
 
-	const spriteMaterialFront = new SpriteMaterial({ map });
+// 	const spriteMaterialFront = new SpriteMaterial({ map });
 
-	const spriteFront = new Sprite(spriteMaterialFront);
-	spriteFront.position.copy(position)
+// 	const spriteFront = new Sprite(spriteMaterialFront);
+// 	spriteFront.position.copy(position)
 
-	const spriteMaterialRear = new SpriteMaterial({
-		map,
-		opacity: 0.3,
-		transparent: true,
-		depthTest: false
-	});
+// 	const spriteMaterialRear = new SpriteMaterial({
+// 		map,
+// 		opacity: 0.3,
+// 		transparent: true,
+// 		depthTest: false
+// 	});
 
-	const spriteRear = new Sprite(spriteMaterialRear);
-	spriteRear.position.copy(position)
+// 	const spriteRear = new Sprite(spriteMaterialRear);
+// 	spriteRear.position.copy(position)
 
-	model.add(spriteFront, spriteRear)
-}
+// 	model.add(spriteFront, spriteRear)
+// }
 
 // ----------------------------------------- RENDER LOOP ----------------------------------------
 renderer.setAnimationLoop(() => {

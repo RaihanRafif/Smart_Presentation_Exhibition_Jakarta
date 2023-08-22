@@ -2,7 +2,8 @@ import {
 	Color,
 	Vector3,
 	GridHelper,
-	BoxGeometry, MeshBasicMaterial, Mesh
+	BoxGeometry, MeshBasicMaterial, Mesh,
+	FontLoader
 } from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { scene, camera, orbitControls, loader } from "../script.js";
 // import * as THREE from "three";
@@ -439,17 +440,42 @@ video_pop_up.addEventListener("click", function (e) {
 // }
 
 function createAnnotation(scene, content, position, label) {
-	const annotationGeometry = new BoxGeometry(0, 0.1, 0.5);
-	const annotationMaterial = new MeshBasicMaterial({ color: 0xff0000 });
-	const annotationMesh = new Mesh(annotationGeometry, annotationMaterial);
+	// const annotationGeometry = new BoxGeometry(0, 0.1, 0.5);
+	// const annotationMaterial = new MeshBasicMaterial({ color: 0x00ff00  });
+	// const annotationMesh = new Mesh(annotationGeometry, annotationMaterial);
 
-	annotationMesh.position.copy(position);
+	// annotationMesh.position.copy(position);
 
-	scene.add(annotationMesh);
+	// console.log(content);
+
+	// Load a font (make sure you have the font file accessible)
+	const fontLoader = new FontLoader();
+	fontLoader.load('./assets/fonts/helvetiker_bold.typeface.json', (font) => {
+		// Create text geometry using the loaded font
+		const textGeometry = new TextGeometry(content, {
+			font: font,
+			size: 0.1, // Adjust as needed
+			height: 0.01, // Adjust as needed
+		});
+
+		const textMaterial = new MeshBasicMaterial({ color: 0x16537e }); // Green color for text
+		const textMesh = new Mesh(textGeometry, textMaterial);
+
+		// Position the text mesh on top of the annotation box
+		textMesh.position.copy(position);
+		textMesh.position.y += 0.1; // Adjust the height to position the text above the box
+		
+
+		// Make the text mesh always face the camera
+		textMesh.lookAt(camera.position);
+		textMesh.rotateY(Math.PI);
+
+		scene.add(textMesh);
+	});
+
+	// scene.add(annotationMesh);
 }
 
-
-//tesss
 
 // Function to remove an annotation
 function removeAnnotation(obj, label) {
@@ -505,10 +531,10 @@ function SR100C_v1(obj) {
 		createAnnotation(obj, "Guide Flange", new Vector3(-0.3, 1.5, 0), "D");
 		createAnnotation(obj, "Air Circulation", new Vector3(0.1, 1.75, 0.75), "E");
 		createAnnotation(obj, "Upper Frame", new Vector3(0.6, 1.5, 0.75), "F");
-		createAnnotation(obj, "Crushing Chamber", new Vector3(0.1, 1, 0.75), "G");
-		createAnnotation(obj, "Rotor", new Vector3(-0.1, 1, 0), "H");
+		createAnnotation(obj, "Crushing Chamber", new Vector3(0.1, 1, 1), "G");
+		createAnnotation(obj, "Rotor", new Vector3(-0.3, 1, 0.5), "H");
 		createAnnotation(obj, "Vertical Shaft", new Vector3(-0.25, 0.5, 0), "I");
-		createAnnotation(obj, "Pulley", new Vector3(-0.1, -0.1, 0), "J");
+		createAnnotation(obj, "Pulley", new Vector3(-0.2, -0.1, 0.2), "J");
 		createAnnotation(obj, "Shaped Material", new Vector3(-0.1, -0.1, 0.75), "K");
 
 		gsap.to(camera.position, {
