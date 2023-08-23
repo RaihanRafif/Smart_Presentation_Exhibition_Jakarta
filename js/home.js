@@ -20,6 +20,9 @@ import {
 
 // ---------------------------------------------------------------------------------------
 // ----------------------------------- Const, Var, Let -----------------------------------
+
+let index = 1;
+
 // ---------------------------------------------------------------------------------------
 
 // ----------------------------------- Explode 3D File -----------------------------------
@@ -174,6 +177,8 @@ const soundExpand = document.querySelector(".sound-expand");
 
 var audio = new Audio("./audio/podcast-18169.mp3");
 var audio_speech = new Audio("./audio/audio_speech1.wav");
+var audio_speech_2 = new Audio("./audio/JKT48 - Hissatsu Teleport (Jurus Rahasia Teleport) ｜ Color Coded Lyrics (INA⧸ENG).wav");
+
 
 const toggle_music = document.querySelector(".toggle-music");
 const toggle_speech = document.querySelector(".toggle-speech");
@@ -366,11 +371,19 @@ toggle_music.addEventListener("click", () => {
 toggle_speech.addEventListener("click", () => {
 	toggle_speech.classList.toggle("active");
 
+	let sound;
+
+	if (index == 1) {
+		sound = audio_speech
+	} else if (index == 2) {
+		sound = audio_speech_2
+	}
+
 	if (toggle_speech.classList.contains("active")) {
-		audio_speech.play();
+		sound.play();
 	} else {
-		audio_speech.pause();
-		audio_speech.currentTime = 0;
+		sound.pause();
+		sound.currentTime = 0;
 	}
 });
 
@@ -439,12 +452,12 @@ video_pop_up.addEventListener("click", function (e) {
 // 	obj.add(annotation);
 // }
 
-function createAnnotation(scene, content, position, label) {
-	// const annotationGeometry = new BoxGeometry(0, 0.1, 0.5);
-	// const annotationMaterial = new MeshBasicMaterial({ color: 0x00ff00  });
-	// const annotationMesh = new Mesh(annotationGeometry, annotationMaterial);
+function createAnnotation(scene, content, position, label, AGscale, AGtranslate, AGrotate) {
+	const annotationGeometry = new BoxGeometry(0, 0.1, 0.5);
+	const annotationMaterial = new MeshBasicMaterial({ color: 0x74E7D4 });
+	const annotationMesh = new Mesh(annotationGeometry, annotationMaterial);
 
-	// annotationMesh.position.copy(position);
+	annotationMesh.position.copy(position);
 
 	// console.log(content);
 
@@ -454,34 +467,68 @@ function createAnnotation(scene, content, position, label) {
 		// Create text geometry using the loaded font
 		const textGeometry = new TextGeometry(content, {
 			font: font,
-			size: 0.1, // Adjust as needed
-			height: 0.01, // Adjust as needed
+			size: 0.05, // Adjust as needed
+			height: 0.001, // Adjust as needed
 		});
 
-		const textMaterial = new MeshBasicMaterial({ color: 0x16537e }); // Green color for text
+		const textMaterial = new MeshBasicMaterial({ color: 0x000000 }); // Green color for text
 		const textMesh = new Mesh(textGeometry, textMaterial);
 
 		// Position the text mesh on top of the annotation box
 		textMesh.position.copy(position);
-		textMesh.position.y += 0.1; // Adjust the height to position the text above the box
-		
+		// textMesh.position.y += 0.1; // Adjust the height to position the text above the box
 
 		// Make the text mesh always face the camera
 		textMesh.lookAt(camera.position);
 		textMesh.rotateY(Math.PI);
 
-		scene.add(textMesh);
-	});
+		rotateObject(textMesh, AGrotate, 0, 0)
 
-	// scene.add(annotationMesh);
+		// console.log(content, " : ");
+		// console.log("textMesh.position : ", textMesh.position);
+		// console.log("annotationMesh : ", annotationMesh.position);
+
+		textMesh.name = label
+
+		scene.add(textMesh);
+
+		// Set annotationMesh's position and rotation to match textMesh
+		annotationMesh.position.copy(textMesh.position);
+		annotationMesh.rotation.copy(textMesh.rotation);
+
+		rotateObject(annotationMesh, 0, 90, 0)
+		translateObject(annotationMesh, AGtranslate.x, AGtranslate.y, AGtranslate.z)
+
+		annotationMesh.scale.set(AGscale.x, AGscale.y, AGscale.z);
+
+		annotationMesh.name = `A${label}`
+		// Add annotationMesh to the scene
+		scene.add(annotationMesh);
+	});
 }
+
+function rotateObject(object, degreeX = 0, degreeY = 0, degreeZ = 0) {
+	object.rotateX(THREE.Math.degToRad(degreeX));
+	object.rotateY(THREE.Math.degToRad(degreeY));
+	object.rotateZ(THREE.Math.degToRad(degreeZ));
+}
+
+function translateObject(object, degreeX = 0, degreeY = 0, degreeZ = 0) {
+	object.translateX(THREE.Math.degToRad(degreeX));
+	object.translateY(THREE.Math.degToRad(degreeY));
+	object.translateZ(THREE.Math.degToRad(degreeZ));
+}
+
 
 
 // Function to remove an annotation
 function removeAnnotation(obj, label) {
 	// console.log(`Removing annotation with label "${label}"`);
+
+	// console.log(obj);
 	const annotation = obj.getObjectByName(label);
 	obj.remove(annotation)
+
 }
 
 // Function to reset the state of the 3D model and annotations
@@ -525,17 +572,17 @@ function SR100C_v1(obj) {
 		});
 
 		// SR100 Annotation
-		createAnnotation(obj, "Upper Casing", new Vector3(-0.6, 2.2, 0), "A");
-		createAnnotation(obj, "Material Feed", new Vector3(-0.3, 2.5, 0), "B");
-		createAnnotation(obj, "Hydraulic Casing Opener", new Vector3(0.6, 2.2, 0), "C");
-		createAnnotation(obj, "Guide Flange", new Vector3(-0.3, 1.5, 0), "D");
-		createAnnotation(obj, "Air Circulation", new Vector3(0.1, 1.75, 0.75), "E");
-		createAnnotation(obj, "Upper Frame", new Vector3(0.6, 1.5, 0.75), "F");
-		createAnnotation(obj, "Crushing Chamber", new Vector3(0.1, 1, 1), "G");
-		createAnnotation(obj, "Rotor", new Vector3(-0.3, 1, 0.5), "H");
-		createAnnotation(obj, "Vertical Shaft", new Vector3(-0.25, 0.5, 0), "I");
-		createAnnotation(obj, "Pulley", new Vector3(-0.2, -0.1, 0.2), "J");
-		createAnnotation(obj, "Shaped Material", new Vector3(-0.1, -0.1, 0.75), "K");
+		createAnnotation(obj, "Upper Casing", new Vector3(-0.6, 2.2, 0), "A", { x: 1, y: 1, z: 1 }, { x: 0, y: 2, z: 13 }, -15);
+		createAnnotation(obj, "Material Feed", new Vector3(-0.3, 2.5, 0), "B", { x: 1, y: 1, z: 1 }, { x: 0, y: 2, z: 13 }, -10);
+		createAnnotation(obj, "Hydraulic Casing Opener", new Vector3(0.6, 2.2, 0), "C", { x: 1, y: 1, z: 1.7 }, { x: 0, y: 2, z: 23 }, -15);
+		createAnnotation(obj, "Guide Flange", new Vector3(-0.3, 1.5, 0), "D", { x: 1, y: 1, z: 1 }, { x: 0, y: 2, z: 13 }, -15);
+		createAnnotation(obj, "Air Circulation", new Vector3(0.1, 1.75, 0.75), "E", { x: 1, y: 1, z: 1 }, { x: 0, y: 2, z: 13 }, -20);
+		createAnnotation(obj, "Upper Frame", new Vector3(0.6, 1.8, 0.75), "F", { x: 1, y: 1, z: 1 }, { x: 0, y: 2, z: 13 }, -20);
+		createAnnotation(obj, "Crushing Chamber", new Vector3(0.1, 1, 1), "G", { x: 1, y: 1, z: 1.3 }, { x: 0, y: 2, z: 17 }, -20);
+		createAnnotation(obj, "Rotor", new Vector3(-0.3, 1, 0.5), "H", { x: 1, y: 1, z: 0.5 }, { x: 0, y: 2, z: 5 }, -20);
+		createAnnotation(obj, "Vertical Shaft", new Vector3(-0.25, 0.5, 0), "I", { x: 1, y: 1, z: 1 }, { x: 0, y: 2, z: 13 }, -25);
+		createAnnotation(obj, "Pulley", new Vector3(-0.2, -0.1, 0.2), "J", { x: 1, y: 1, z: 0.5 }, { x: 0, y: 2, z: 5 }, -30);
+		createAnnotation(obj, "Shaped Material", new Vector3(-0.1, -0.1, 0.75), "K", { x: 1, y: 1, z: 1.2 }, { x: 0, y: 2, z: 15 }, -30);
 
 		gsap.to(camera.position, {
 			duration: 2,
@@ -557,7 +604,7 @@ function SR100C_v1(obj) {
 	}
 
 	else {
-		console.log("Button clicked: explode inactive");
+		// console.log("Button clicked: explode inactive");
 
 		object_children.forEach((child) => {
 			if (moved_mesh.includes(child.name)) {
@@ -577,6 +624,17 @@ function SR100C_v1(obj) {
 		removeAnnotation(obj, "I")
 		removeAnnotation(obj, "J")
 		removeAnnotation(obj, "K")
+		removeAnnotation(obj, "AA")
+		removeAnnotation(obj, "AB")
+		removeAnnotation(obj, "AC")
+		removeAnnotation(obj, "AD")
+		removeAnnotation(obj, "AE")
+		removeAnnotation(obj, "AF")
+		removeAnnotation(obj, "AG")
+		removeAnnotation(obj, "AH")
+		removeAnnotation(obj, "AI")
+		removeAnnotation(obj, "AJ")
+		removeAnnotation(obj, "AK")
 
 		gsap.to(camera.position, {
 			duration: 2.8,
@@ -745,7 +803,11 @@ function updateLamp() {
 // Inside the loadCatalogue function
 function loadCatalogue(catalogue_product_list) {
 	catalogue_product_list.forEach(function (product_list) {
+
+
+
 		product_list.addEventListener("click", () => {
+			index = product_list.id
 			resetCatalogueSelect();
 			// product_list.classList.toggle("active");
 			product_list.classList.add("active"); // Add the "active" class here
