@@ -29,6 +29,7 @@ let index = 1;
 
 const explode_button = document.querySelector(".explode-button");
 let product_list_text = "SR100C_v1";
+
 const moved_mesh = [
 	"Mirror61",
 	"Mirror62",
@@ -179,6 +180,16 @@ var audio = new Audio("./audio/podcast-18169.mp3");
 var audio_speech = new Audio("./audio/audio_speech1.wav");
 var audio_speech_2 = new Audio("./audio/JKT48 - Hissatsu Teleport (Jurus Rahasia Teleport) ｜ Color Coded Lyrics (INA⧸ENG).wav");
 
+var sound = audio_speech;
+
+function audioPlayer() {
+	if (index == 1) {
+		sound = audio_speech
+	} else if (index == 2) {
+		sound = audio_speech_2
+	}
+	sound.play()
+}
 
 const toggle_music = document.querySelector(".toggle-music");
 const toggle_speech = document.querySelector(".toggle-speech");
@@ -371,8 +382,6 @@ toggle_music.addEventListener("click", () => {
 toggle_speech.addEventListener("click", () => {
 	toggle_speech.classList.toggle("active");
 
-	let sound;
-
 	if (index == 1) {
 		sound = audio_speech
 	} else if (index == 2) {
@@ -380,7 +389,7 @@ toggle_speech.addEventListener("click", () => {
 	}
 
 	if (toggle_speech.classList.contains("active")) {
-		sound.play();
+		audioPlayer()
 	} else {
 		sound.pause();
 		sound.currentTime = 0;
@@ -561,6 +570,7 @@ function resetModelAndAnnotations(obj, label) {
 
 function SR100C_v1(obj) {
 	let object_children = obj.children;
+	// console.log(object_children);
 
 	if (explode_button.classList.contains("active")) {
 		console.log("Button clicked: explode active");
@@ -688,7 +698,6 @@ function SRユニット_v1(obj) {
 			}
 		});
 	} else {
-		console.log("666");
 		obj.forEach((child) => {
 			// Toggle visibility for child objects
 			if (moved_mesh.includes(child.name)) {
@@ -803,11 +812,18 @@ function updateLamp() {
 // Inside the loadCatalogue function
 function loadCatalogue(catalogue_product_list) {
 	catalogue_product_list.forEach(function (product_list) {
-
-
-
 		product_list.addEventListener("click", () => {
-			index = product_list.id
+
+			// console.log("Index : ", index);
+			// console.log("product_list.id : ", product_list.id);
+
+			if (product_list.id != index) {
+				index = product_list.id
+				sound.pause()
+				sound.currentTime = 0;
+				toggle_speech.classList.contains("active") ? audioPlayer() : ""
+			}
+
 			resetCatalogueSelect();
 			// product_list.classList.toggle("active");
 			product_list.classList.add("active"); // Add the "active" class here
