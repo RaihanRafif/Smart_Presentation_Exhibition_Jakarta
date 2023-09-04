@@ -22,6 +22,7 @@ import {
 // ----------------------------------- Const, Var, Let -----------------------------------
 
 let index = 1;
+let soundStatus = 0;
 
 // ---------------------------------------------------------------------------------------
 
@@ -184,11 +185,22 @@ var sound = audio_speech;
 
 function audioPlayer() {
 	if (index == 1) {
-		sound = audio_speech
+		sound = audio_speech;
 	} else if (index == 2) {
-		sound = audio_speech_2
+		sound = audio_speech_2;
 	}
-	sound.play()
+
+	sound.addEventListener("ended", function () {
+		// Kode yang akan dijalankan saat audio selesai diputar
+		if (soundStatus == 1) {
+			setTimeout(() => {
+				audioPlayer(); // Panggil audioPlayer() lagi setelah 30 detik
+			}, 30000);
+		}
+		// Anda dapat menambahkan logika tambahan atau memulai ulang audio di sini jika diperlukan
+	});
+
+	sound.play();
 }
 
 const toggle_music = document.querySelector(".toggle-music");
@@ -389,8 +401,10 @@ toggle_speech.addEventListener("click", () => {
 	}
 
 	if (toggle_speech.classList.contains("active")) {
+		soundStatus = 1;
 		audioPlayer()
 	} else {
+		soundStatus = 0;
 		sound.pause();
 		sound.currentTime = 0;
 	}
